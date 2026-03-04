@@ -1,0 +1,6 @@
+node_modules/
+.vscode/
+.env
+LOGIN_SETUP.md
+LOGIN_TESTING_GUIDE.md
+VERIFICATION_CHECKLIST.md

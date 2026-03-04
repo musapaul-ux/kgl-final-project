@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Record Cash Sale - KGL</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+}
+
+body {
+    background: #f4f7fb;
+    padding: 40px;
+}
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    background: white;
+    padding: 35px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #0a3d62;
+}
+
+form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+input, select {
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #d63384;
+}
+
+.stock-info {
+    font-size: 13px;
+    color: #0a3d62;
+    margin-top: 5px;
+}
+
+.total-box {
+    grid-column: span 2;
+    padding: 15px;
+    background: #f0f4ff;
+    border-radius: 8px;
+    font-weight: 600;
+}
+
+button {
+    grid-column: span 2;
+    padding: 12px;
+    background: #0a3d62;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d63384;
+}
+
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    .total-box,
+    button {
+        grid-column: span 1;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>Record Cash Sale</h1>
+
+<form id="cashForm">
+
+    <div class="form-group">
+        <label>Branch</label>
+        <input type="text" id="branchName" disabled>
+    </div>
+
+    <div class="form-group">
+        <label>Sales Agent</label>
+        <input type="text" id="agentName" disabled>
+    </div>
+
+    <div class="form-group">
+        <label>Produce</label>
+        <select id="produceSelect" required></select>
+        <div class="stock-info" id="stockInfo"></div>
+    </div>
+
+    <div class="form-group">
+        <label>Tonnage (Kg)</label>
+        <input type="number" id="tonnageKgs" step="0.1" required>
+    </div>
+
+    <div class="form-group">
+        <label>Buyer Name</label>
+        <input type="text" id="buyerName" required>
+    </div>
+
+    <div class="form-group">
+        <label>Date</label>
+        <input type="date" id="date" required>
+    </div>
+
+    <div class="total-box">
+        Total Amount: UGX <span id="totalAmount">0</span>
+    </div>
+
+    <button type="submit">Complete Sale</button>
+
+</form>
+</div>
+
+<script>
+const API_BASE_URL = "http://localhost:5000/api";
+let products = [];
+let selectedProduct = null;
+
+// Decode JWT
+function parseJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
+}
+
+async function init() {
+    const token = localStorage.getItem("token");
+    const user = parseJwt(token);
+
+    document.getElementById("branchName").value = user.branch;
+    document.getElementById("agentName").value = user.name;
+
+    document.getElementById("date").valueAsDate = new Date();
+
+    // Load products for branch
+    const res = await fetch(`${API_BASE_URL}/products`, {
+        headers: { Authorization: `Bearer ${token}` }
+    });
+
+    products = await res.json();
+
+    const branchProducts = products.filter(p => p.branch === user.branch);
+
+    const select = document.getElementById("produceSelect");
+    select.innerHTML = '<option value="">Select Produce</option>';
+
+    branchProducts.forEach(p => {
+        select.innerHTML += `<option value="${p._id}">${p.name}</option>`;
+    });
+}
+
+document.getElementById("produceSelect").addEventListener("change", function() {
+    const id = this.value;
+    selectedProduct = products.find(p => p._id === id);
+
+    if (selectedProduct) {
+        document.getElementById("stockInfo").innerText =
+            `Available Stock: ${selectedProduct.quantity} Kg | Price per Kg: UGX ${selectedProduct.sellingPrice.toLocaleString()}`;
+    }
+});
+
+document.getElementById("tonnageKgs").addEventListener("input", function() {
+    if (!selectedProduct) return;
+
+    const qty = parseFloat(this.value) || 0;
+    const total = qty * selectedProduct.sellingPrice;
+
+    document.getElementById("totalAmount").innerText =
+        total.toLocaleString();
+});
+
+document.getElementById("cashForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const token = localStorage.getItem("token");
+    const user = parseJwt(token);
+
+    const qty = parseFloat(document.getElementById("tonnageKgs").value);
+    const total = qty * selectedProduct.sellingPrice;
+
+    const data = {
+        produceName: selectedProduct.name,
+        branchName: user.branch,
+        tonnageKgs: qty,
+        amountPaid: total,
+        buyerName: document.getElementById("buyerName").value,
+        salesAgentName: user.name,
+        date: document.getElementById("date").value,
+        time: new Date().toLocaleTimeString()
+    };
+
+    const res = await fetch(`${API_BASE_URL}/sales`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+        alert(result.message);
+        return;
+    }
+
+    generateReceipt(data);
+});
+
+function generateReceipt(data) {
+    const receipt = `
+        KGL SALES RECEIPT
+        -----------------------------
+        Branch: ${data.branchName}
+        Agent: ${data.salesAgentName}
+        Produce: ${data.produceName}
+        Quantity: ${data.tonnageKgs} Kg
+        Total Paid: UGX ${data.amountPaid.toLocaleString()}
+        Buyer: ${data.buyerName}
+        Date: ${data.date}
+        -----------------------------
+        Thank you for your purchase!
+    `;
+
+    const win = window.open('', '', 'width=400,height=600');
+    win.document.write(`<pre>${receipt}</pre>`);
+    win.print();
+    win.close();
+}
+
+init();
+</script>
+
+</body>
+</html>
