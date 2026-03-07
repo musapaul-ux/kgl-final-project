@@ -46,6 +46,15 @@ exports.getUsers = async (req, res) => {
     res.json(users);
 };
 
+// GET USER BY ID
+exports.getUserById = async (req, res) =>{
+    const user = await User.findById(req.params.id).select('-password');
+    if (!user) {
+        return res.status(404).json({ message: "User not found" });
+    }
+    res.json(user);
+}
+
 
 // UPDATE USER
 exports.updateUser = async (req, res) => {

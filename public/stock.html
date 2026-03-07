@@ -8,42 +8,41 @@
       href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/style.css" />
+    
   </head>
   <body class="dashboard">
     <div class="dashboard-wrapper">
       <div class="sidebar">
         <h2 style="color: white; margin: 20px 0; text-align: center; font-size: 16px;">KGL SYSTEM</h2>
         <nav>
-          <a href="manager_panel.html" style="display: block;">📊 Create User</a>
-          <a href="procurement_dashboard.html" style="display: block; background: rgba(255, 255, 255, 0.2);">📦 View Procurements</a>
+          <a href="add_user.html" style="display: block;">📊 Add User</a>
+          <a href="manager_dashboard.html" style="display: block; background: rgba(255, 255, 255, 0.2);">📦 View Procurements</a>
           <a href="record_procurement.html" style="display: block;">➕ Record Procurement</a>
-          <a href="sales_dashboard.html" style="display: block;">💰 Sales</a>
+          <a href="sales_list.html" style="display: block;">💰 Sales</a>
           <a href="users_list.html" style="display: block;">👥 Users</a>
         </nav>
         <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
       </div>
       <div class="main-content">
+        
         <div class="dashboard-container">
-          <h1>Procurement Records</h1>
-          <p>All procurements recorded in the system.</p>
+          <h1>Stock Records</h1>
+          <p>All products in stock.</p>
 
-          <!-- procurements table section -->
-          <section id="procurementsTableSection" style="margin-top: 25px">
+          <!-- products table section -->
+          <section id="productTableSection" style="margin-top: 25px">
             <table class="records-table">
               <thead>
                 <tr>
-                  <th>Date (M/D/YYYY)</th>
-                  <th>Produce</th>
-                  <th>Supplier</th>
-                  <th>Supplier Type</th>
-                  <th>Tonnage (kg)</th>
-                  <th>Branch</th>
-                  <th>Cost (UGX)</th>
+                  <th>Stock Date</th>
+                  <th>Product Name</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
                   <th>Actions</th>
                 </tr>
               </thead>
-              <tbody id="procurementsTableBody">
+              <tbody id="productTableBody">
                 <tr>
                   <td colspan="8" style="text-align: center">Loading...</td>
                 </tr>
@@ -52,7 +51,7 @@
           </section>
 
           <p
-            id="procurementMessage"
+            id="productMessage"
             class="error-message"
             style="margin-top: 20px"
           ></p>
@@ -62,6 +61,6 @@
 
     <script src="js/config.js"></script>
     <script src="js/auth.js"></script>
-    <script src="js/procurement_dashboard.js"></script>
+    <script src="js/stock.js"></script>
   </body>
 </html>

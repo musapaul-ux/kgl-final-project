@@ -61,7 +61,7 @@ document.getElementById("logoutBtn").addEventListener("click", logoutUser);
             document.getElementById("date").valueAsDate = new Date();
 
             setTimeout(() => {
-              window.location.href = "procurement_dashboard.html";
+              window.location.href = "manager_dashboard.html";
             }, 1500);
           } catch (err) {
             document.getElementById("procurementMessage").textContent =

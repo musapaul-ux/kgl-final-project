@@ -44,7 +44,6 @@ const creditSchema = new mongoose.Schema({
         type: String,
         required: true,
         minlength: 2,
-        match: [/^[A-Za-z0-9\s]+$/, 'Produce name must be alphanumeric'],
         enum: PRODUCE_NAMES
     },
     produceType: {

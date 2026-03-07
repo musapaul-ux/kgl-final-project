@@ -6,12 +6,14 @@ const role = require('../middleware/roleMiddleware');
 const {
     createUser,
     getUsers,
+    getUserById,
     updateUser,
     deleteUser
 } = require('../controllers/userController');
 
 router.post('/',auth,role('Manager'), createUser);
 router.get('/', auth, role('Manager'), getUsers);
+router.get('/:id', auth, role('Manager'), getUserById);
 router.patch('/:id', auth, role('Manager'), updateUser);
 router.delete('/:id', auth, role('Manager'), deleteUser);
 

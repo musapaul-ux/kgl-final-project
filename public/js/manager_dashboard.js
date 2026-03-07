@@ -9,8 +9,7 @@ document.getElementById("logoutBtn").addEventListener("click", logoutUser);
             headers: { Authorization: `Bearer ${token}` },
           });
 
-          console.log("API_BASE_URL:", API_BASE_URL);
-          console.log("Fetched data", res);
+         
           const procurements = await res.json();
           const tbody = document.getElementById("procurementsTableBody");
 
@@ -32,7 +31,7 @@ document.getElementById("logoutBtn").addEventListener("click", logoutUser);
                 <td>${p.branchName}</td>
                 <td>${p.costUgx.toLocaleString()}</td>
                 <td>
-                  <button onclick="deleteProcurement('${p._id}')" style="padding:5px 10px; background:#d63384; color:white; border:none; border-radius:4px; cursor:pointer;">Delete</button>
+                  <button class='deleteBtn' data-id="${p._id}" style="padding:5px 10px; background:#d63384; color:white; border:none; border-radius:4px; cursor:pointer;">Delete</button>
                 </td>
               </tr>
             `,
@@ -70,4 +69,16 @@ document.getElementById("logoutBtn").addEventListener("click", logoutUser);
     }
 
       // Load on page load
+    document.addEventListener("DOMContentLoaded", () => {
     loadProcurements();
+
+    const tableBody = document.getElementById("procurementsTableBody");
+
+    tableBody.addEventListener("click", function (e) {
+        if (e.target.classList.contains("deleteBtn")) {
+            const procurementId = e.target.getAttribute("data-id");
+            console.log("Deleting procurement with ID:", procurementId);
+            deleteProcurement(procurementId);
+        }
+    });
+});
