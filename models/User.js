@@ -26,7 +26,8 @@ const userSchema = new mongoose.Schema({
     
     branch: {
         type: String,
-        enum: ['Matugga', 'Maganjo']
+        enum: ['Matugga', 'Maganjo',''],
+        default: ""
     }
 }, { timestamps: true });
 

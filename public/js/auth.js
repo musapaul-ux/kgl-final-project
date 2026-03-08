@@ -28,12 +28,19 @@ async function loginUser(email, password) {
 
         // Decode token to get role and branch
         const payload = JSON.parse(atob(data.token.split('.')[1]));
+        console.log(payload);
         const role = payload.role;
         const branch = payload.branch;
+        const name = payload.name;
+
+        console.log("User role:", role);
+        console.log("User branch:", branch);
+        console.log("User name:", name);
 
         // Save user info in localStorage
         localStorage.setItem("userRole", role);
         localStorage.setItem("userBranch", branch);
+        localStorage.setItem("userName", name);
 
         // Role-based redirect
         if (role === "Director") {
@@ -41,7 +48,7 @@ async function loginUser(email, password) {
         } else if (role === "Manager") {
             window.location.href = "manager_dashboard.html";
         } else if (role === "SalesAgent") {
-            window.location.href = "sales_agent_dashboard.html";
+            window.location.href = "sales_dashboard.html";
         } else {
             window.location.href = "login.html";
         }

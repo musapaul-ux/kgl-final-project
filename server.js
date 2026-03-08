@@ -24,7 +24,15 @@ connectDB();
 // SECURITY MIDDLEWARE
 
 //  Set secure HTTP headers
-app.use(helmet());
+app.use(
+helmet.contentSecurityPolicy({
+directives: {
+defaultSrc: ["'self'"],
+scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+styleSrc: ["'self'", "'unsafe-inline'"]
+}
+})
+);
 
 //  Enable CORS (restrict in production)
 app.use(cors({

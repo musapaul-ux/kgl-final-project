@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sales Agent Dashboard | Karibu Groceries</title>
+
+    <style>
+        /* ---------- GLOBAL STYLES ---------- */
+
+        body {
+            margin: 0;
+            font-family: Segoe UI;
+            background: #f4f6f9;
+        }
+
+        /* ---------- LAYOUT ---------- */
+
+        .wrapper {
+            display: flex;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 240px;
+            height: 100vh;
+            background: #0b3d2e;
+            color: white;
+            padding: 20px;
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 10px;
+            border: none;
+            background: #145c43;
+            color: white;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .sidebar button:hover {
+            background: #1c7c5a;
+        }
+
+        /* ---------- MAIN AREA ---------- */
+
+        .main {
+            margin-left: 260px;
+            width: 100%;
+        }
+
+        /* ---------- TOP BAR ---------- */
+
+        .topbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            color: white;
+            height: 60px;
+            background: #0b3d2e;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* ---------- CONTENT ---------- */
+
+        .content {
+            padding: 30px;
+            margin-top: 10px;
+        }
+
+        .section {
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        /* ---------- FORM DESIGN ---------- */
+
+        form {
+            background: white;
+            padding: 25px;
+            border-radius: 6px;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        form label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        form input,
+        form select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        form button {
+            margin-top: 15px;
+            padding: 10px;
+            background: #0b3d2e;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* ---------- TABLE ---------- */
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        table th,
+        table td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table th {
+            background: #0b3d2e;
+            color: white;
+            text-align: left;
+        }
+
+        /* ---------- RESPONSIVE ---------- */
+
+        @media(max-width:900px) {
+
+            .sidebar {
+                width: 200px;
+            }
+
+            .main {
+                margin-left: 200px;
+            }
+
+        }
+
+        @media(max-width:700px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <!-- ================= SIDEBAR ================= -->
+
+        <div class="sidebar">
+
+            <h2>Sales Agent</h2>
+
+            <button class="viewPdtBtn">View Products</button>
+
+            <button class="addCashBtn">Add Cash Sale</button>
+
+            <button class="addCreditBtn">Add Credit Sale</button>
+
+            <button class="viewCashSalesBtn">View Cash Sales</button>
+
+            <button  class="viewCreditSalesBtn" >View Credit Sales</button>
+
+        </div>
+
+        <!-- ================= MAIN ================= -->
+
+        <div class="main">
+
+            <!-- ===== TOPBAR ===== -->
+
+            <div class="topbar">
+
+                <div id="welcome"></div>
+
+                <button class="logout-btn">Logout</button>
+
+            </div>
+
+            <!-- ===== CONTENT ===== -->
+
+            <div class="content">
+
+                <!-- PRODUCTS -->
+
+                <div id="products" class="section active">
+
+                    <h2>Branch Products</h2>
+
+                    <table id="productsTable">
+
+                        <thead>
+                            <tr>
+                                <th>Produce</th>
+                                <th>Stock (Kgs)</th>
+                                <th>Price (UGX)</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- CASH SALE FORM -->
+
+                <div id="cashSale" class="section">
+
+                    <h2>Record Cash Sale</h2>
+
+                    <form id="cashSaleForm">
+
+                        <label>Produce Name</label>
+                        <select id="produceName">
+                            <option value="Soy beans">Soy Beans</option>
+                            <option value="Grain Maize">Grain Maize</option>
+                            <option value="G-nuts">G-nuts</option>
+                            <option value="Beans">Beans</option>
+                            <option value="Cow peas">Cow peas</option>
+                        </select>
+
+                        <label>Tonnage (Kgs)</label>
+                        <input type="number" id="tonnageKgs" required>
+
+                        <label>Amount Paid</label>
+                        <input type="number" id="amountPaid" required>
+
+                        <label>Buyer Name</label>
+                        <input type="text" id="buyerName" required>
+
+                        <label>Date</label>
+                        <input type="date" id="date" required>
+
+                        <label>Time</label>
+                        <input type="time" id="time" required>
+
+                        <button type="submit">Save Cash Sale</button>
+
+                    </form>
+                    <div id="cashSusMsg" style="margin-top:15px; font-weight:bold; color:green; display:none;">
+                        <p id="cashSusMsgText"></p> 
+                    </div>
+                    <div id="cashErrorMsg" style="margin-top:15px; font-weight:bold; color:red; display:none;">
+                        <p id="cashErrorMsgText"></p>
+                    </div>
+
+                </div>
+
+
+                <!-- CREDIT SALE FORM -->
+
+                <div id="creditSale" class="section">
+
+                    <h2>Record Credit Sale</h2>
+
+                    <form id="creditForm">
+
+                        <label>Buyer Name</label>
+                        <input type="text" id="cBuyer" required>
+
+                        <label>National ID</label>
+                        <input type="text" id="cNid" required>
+
+                        <label>Location</label>
+                        <input type="text" id="cLocation" required>
+
+                        <label>Contact</label>
+                        <input type="text" id="cContact" required>
+
+                        <label>Produce Name</label>
+                        <select id="cProduce">
+                            <option value="Soybeans">Soy Beans</option>
+                            <option value="Grain Maize">Grain Maize</option>
+                            <option value="G-nuts">G-nuts</option>
+                            <option value="Beans">Beans</option>
+                             <option value="Cow peas">Cow peas</option>
+                        </select>
+
+                        <label>Produce Type</label>
+                        <input type="text" id="produceType" required>
+
+                        <label>Tonnage (Kgs)</label>
+                        <input type="number" id="cTonnage" required>
+
+                        <label>Amount Due</label>
+                        <input type="number" id="cAmount" required>
+
+                        <label>Dispatch Date</label>
+                        <input type="date" id="dispatchDate" required>
+
+                        <label>Due Date</label>
+                        <input type="date" id="dueDate" required>
+
+                        <button type="submit">Save Credit Sale</button>
+
+                    </form>
+                    <div id="creditSusMsg" style="margin-top:15px; font-weight:bold; color:green; display:none;">
+                        <p id="susMsg"></p> 
+                    </div>
+                    <div id="creditErrorMsg" style="margin-top:15px; font-weight:bold; color:red; display:none;">
+                        <p id="errorMsg"></p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CASH SALES TABLE -->
+
+                <div id="sales" class="section">
+
+                    <h2>Branch Cash Sales</h2>
+
+                    <table id="salesTable">
+
+                        <thead>
+                            <tr>
+                                <th>Produce</th>
+                                <th>Tonnage</th>
+                                <th>Amount</th>
+                                <th>Buyer</th>
+                                <th>Date</th>
+                                <th>Agent</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+
+                    </table>
+
+                </div>
+
+
+                <!-- CREDIT SALES TABLE -->
+
+                <div id="creditSales" class="section">
+
+                    <h2>Branch Credit Sales</h2>
+
+                    <table id="creditSalesTable">
+
+                        <thead>
+                            <tr>
+                                <th>Buyer</th>
+                                <th>NIN</th>
+                                <th>Produce</th>
+                                <th>Tonnage</th>
+                                <th>Amount Due</th>
+                                <th>Due Date</th>
+                                <th>Agent</th>
+                            </tr>
+                        </thead>
+
+                        <tbody></tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/sales_dashboard.js"></script>
+
+</body>
+
+</html>
