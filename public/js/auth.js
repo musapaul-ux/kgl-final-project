@@ -46,7 +46,7 @@ async function loginUser(email, password) {
         if (role === "Director") {
             window.location.href = "director_dashboard.html";
         } else if (role === "Manager") {
-            window.location.href = "manager_dashboard.html";
+            window.location.href = "manager.html";
         } else if (role === "SalesAgent") {
             window.location.href = "sales_dashboard.html";
         } else {

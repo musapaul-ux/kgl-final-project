@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Manager Dashboard</title>
+
+    <link rel="stylesheet" href="css/manager.css" />
+</head>
+
+<body>
+    <div class="layout">
+        <!-- SIDEBAR -->
+
+        <div class="sidebar">
+            <h2>Manager Panel</h2>
+
+            <ul>
+                <li class="viewPdts">Products</li>
+                <li class="viewProc">Procurement</li>
+                <li class="viewCash">Cash Sales</li>
+                <li class="viewCredits">Credit Sales</li>
+                <li class="viewUsers">Users</li>
+            </ul>
+        </div>
+
+        <!-- MAIN CONTENT -->
+
+        <div class="main">
+            <div class="topbar">
+                <span id="managerName">Welcome</span>
+                <span id="managerBranch">| Branch </span>
+
+                <button class="logout-btn">Logout</button>
+            </div>
+
+            <div class="content">
+                <!-- PRODUCTS -->
+
+                <section id="products" class="section">
+                    <h2>Branch Products</h2>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Stocked At</th>
+                                <th>Quantity</th>
+                                <th>Updated At</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="productTable"></tbody>
+                    </table>
+                </section>
+
+                <!-- PROCUREMENT -->
+
+                <section id="procurement" class="section hidden">
+                    <h2>Procurement Records</h2>
+
+                    <button id="addProcurementBtn">Add Procurement</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produce</th>
+                                <th>Supplier</th>
+                                <th>Kgs</th>
+                                <th>Cost</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="procurementTable"></tbody>
+                    </table>
+                </section>
+
+                <!-- CASH SALES -->
+
+                <section id="cashSales" class="section hidden">
+                    <h2>Cash Sales</h2>
+
+                    <button id="addCashSaleBtn">Record Sale</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Produce</th>
+                                <th>Kgs</th>
+                                <th>Amount</th>
+                                <th>Buyer</th>
+                                <th>Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="cashSalesTable"></tbody>
+                    </table>
+                </section>
+
+                <!-- CREDIT SALES -->
+
+                <section id="creditSales" class="section hidden">
+                    <h2>Credit Sales</h2>
+
+                    <button id="addCreditSaleBtn">Add Credit Sale</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Buyer</th>
+                                <th>Produce</th>
+                                <th>Kgs</th>
+                                <th>Amount Due</th>
+                                <th>Due Date</th>
+                                <th>Recorded by</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="creditSalesTable"></tbody>
+                    </table>
+                </section>
+
+                <!-- USERS -->
+
+                <section id="users" class="section hidden">
+                    <h2>Branch Users</h2>
+
+                    <button id="addUserBtn">Add User</button>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Created At</th>
+                                <th>updatedAt</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="userTable"></tbody>
+                    </table>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL FORM -->
+
+
+    <!-- ============================= -->
+    <!-- MODAL FORM (ADD THIS) -->
+    <!-- ============================= -->
+
+    <div id="formModal" class="modal hidden">
+
+        <div class="modal-content">
+
+            <h3 id="formTitle"></h3>
+
+            <form id="dynamicForm"></form>
+
+            <button id="cancelBtn">Cancel</button>
+
+        </div>
+
+    </div>
+
+
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/manger.js"></script>
+</body>
+
+</html>
