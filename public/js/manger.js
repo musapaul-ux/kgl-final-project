@@ -606,7 +606,13 @@ function openCreditSaleForm() {
 <input type="date" name="dueDate">
 
 <label>Produce Name</label>
-<input name="produceName">
+<select name="produceName">
+<option value="Beans">Beans</option>
+<option value="G-nuts">G-nuts</option>
+<option value="Grain Maize">Grain Maize</option>
+<option value="Soy beans">Soy beans</option>
+<option value="Cow peas">Cow peas</option>
+</select>
 
 <label>Produce Type</label>
 <input name="produceType">
@@ -646,6 +652,7 @@ async function createCreditSale(e) {
         const data = res.json()
 
         if (!res.ok) {
+            console.log(data.message)
             throw new Error(data.message || "Failed to record credit sale")
         }
         else {
@@ -758,6 +765,16 @@ async function editUser(id) {
 
     document.getElementById("dynamicForm").innerHTML = `
 
+    <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:green;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
+
 <label>Name</label>
 <input name="name" value="${data.name}">
 
@@ -773,15 +790,6 @@ async function editUser(id) {
 
 <button type="submit" style="background-color: green;">Update</button>
 
-<div id="feedBack" style="
-    display:none;
-    background:#ffdede;
-    color:green;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:4px;
-    font-size:14px;
-"></div>
 `
 
     document.getElementById("dynamicForm").onsubmit = async function (e) {
