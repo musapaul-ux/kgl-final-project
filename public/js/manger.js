@@ -292,14 +292,15 @@ async function createProcurement(e) {
 
         if (!res.ok) {
             throw new Error(data.error || "failed to record procurement")
+        } else {
+            msg.textContent = "Procurement record created succesfully."
+            msg.style.display = "block"
+            closeForm()
+            loadProcurements()
         }
-
-        msg.textContent = "Procurement record created succesfully."
-        msg.style.display = "block"
-        closeForm()
-        loadProcurements()
     } catch (error) {
-        msg.textContent = `error.message`
+        msg.textContent = error.message
+        msg.style.color = "red"
         msg.style.display = "block"
     }
 
@@ -386,8 +387,9 @@ async function editProcurement(id) {
             msg.style.display = "block"
 
         } catch (error) {
-            msg.textContent = `error.message`
+            msg.textContent = error.message
             msg.style.display = "block"
+            msg.style.color = "red"
             closeForm()
             loadProcurements()
         }
@@ -429,6 +431,15 @@ function openCashSaleForm() {
 
 <button style="background-color: green;" type="submit">Save</button>
 
+<div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:green;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 `
 
     document.getElementById("dynamicForm").onsubmit = createCashSale
@@ -443,21 +454,32 @@ async function createCashSale(e) {
     e.preventDefault()
 
     const form = Object.fromEntries(new FormData(e.target))
-
+    const msg = document.getElementById("feedBack")
     form.branchName = branch
 
-    await fetch(`${API}/sales`, {
+    try {
+        const res = await fetch(`${API}/sales`, {
 
-        method: "POST",
-        headers,
-        body: JSON.stringify(form)
+            method: "POST",
+            headers,
+            body: JSON.stringify(form)
 
-    })
+        })
 
-    closeForm()
-
-    loadCashSales()
-
+        const data = res.json()
+        if (!res.ok) {
+            throw new Error(data.message || "failed to record sale")
+        } else {
+            msg.textContent = "sale recorded successfully"
+            msg.style.display = "block"
+            closeForm()
+            loadCashSales()
+        }
+    } catch (error) {
+        msg.textContent = error.message
+        msg.style.display = "block"
+        msg.style.color = "red"
+    }
 }
 
 // handles editing
@@ -473,6 +495,16 @@ async function editSale(id) {
     document.getElementById("formTitle").textContent = "Edit Cash Sale"
 
     document.getElementById("dynamicForm").innerHTML = `
+    
+    <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:#b30000;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 
 <label>Produce Name</label>
 <input name="produceName" value="${data.produceName}">
@@ -503,20 +535,33 @@ async function editSale(id) {
         e.preventDefault()
 
         const form = Object.fromEntries(new FormData(e.target))
+        const msg = document.getElementById("feedBack")
 
-        await fetch(`${API}/sales/${id}`, {
-            method: "PATCH",
-            headers,
-            body: JSON.stringify(form)
-        })
+        try {
+            const res = await fetch(`${API}/sales/${id}`, {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify(form)
+            })
 
-        closeForm()
-        loadCashSales()
+            const data = res.json()
+
+            if (!res.ok) {
+                throw new Error(data.message || "failed to edit sale!")
+            } else {
+                msg.textContent = "sale updated successfully."
+                msg.style.display = "block"
+                closeForm()
+                loadCashSales()
+            }
+
+        } catch (error) {
+            msg.textContent = error.message
+            msg.style.display = "block"
+            msg.style.color = "red"
+        }
 
     }
-
-    openForm()
-
 }
 
 
@@ -529,6 +574,15 @@ function openCreditSaleForm() {
     document.getElementById("formTitle").textContent = "Record Credit Sale"
 
     document.getElementById("dynamicForm").innerHTML = `
+        <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:green;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 
 <label>Buyer Name</label>
 <input name="buyerName">
@@ -579,32 +633,54 @@ async function createCreditSale(e) {
     e.preventDefault()
 
     const form = Object.fromEntries(new FormData(e.target))
-
+    const msg = document.getElementById("feedBack")
     form.branchName = branch
 
-    await fetch(`${API}/credit`, {
+    try {
+        const res = await fetch(`${API}/credit`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(form)
+        })
 
-        method: "POST",
-        headers,
-        body: JSON.stringify(form)
+        const data = res.json()
 
-    })
-
-    closeForm()
-    loadCreditSales()
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to record credit sale")
+        }
+        else {
+            msg.textContent = "Credit sale recorded successfully."
+            msg.style.display = "block"
+            closeForm()
+            loadCreditSales()
+        }
+    } catch (error) {
+        msg.textContent = error.message
+        msg.style.color = "red"
+        msg.style.display = "block"
+    }
 
 }
 
 
-/* ================================
+/* 
 USER FORM
-================================ */
+*/
 
 function openUserForm() {
 
     document.getElementById("formTitle").textContent = "Create User"
 
     document.getElementById("dynamicForm").innerHTML = `
+     <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:green;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 
 <label>Name</label>
 <input name="name">
@@ -638,19 +714,34 @@ async function createUser(e) {
     e.preventDefault()
 
     const form = Object.fromEntries(new FormData(e.target))
-
+    const msg = document.getElementById("feedBack")
     form.branch = branch
 
-    await fetch(`${API}/users`, {
+    try {
+        const res = await fetch(`${API}/users`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(form)
+        })
 
-        method: "POST",
-        headers,
-        body: JSON.stringify(form)
+        const data = res.json()
 
-    })
+        if (!res.ok) {
+            throw new Error(data.message || "Failed to create user")
+        }
+        else {
+            msg.textContent = "User created successfully."
+            msg.style.display = "block"
+            closeForm()
+            loadUsers()
+        }
 
-    closeForm()
-    loadUsers()
+
+    } catch (error) {
+        msg.textContent = error.message
+        msg.style.color = "red"
+        msg.style.display = "block"
+    }
 
 }
 
@@ -681,6 +772,16 @@ async function editUser(id) {
 </select>
 
 <button type="submit" style="background-color: green;">Update</button>
+
+<div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:green;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 `
 
     document.getElementById("dynamicForm").onsubmit = async function (e) {
@@ -688,20 +789,32 @@ async function editUser(id) {
         e.preventDefault()
 
         const form = Object.fromEntries(new FormData(e.target))
+        const msg = document.getElementById("feedBack")
 
-        await fetch(`${API}/users/${id}`, {
-            method: "PATCH",
-            headers,
-            body: JSON.stringify(form)
-        })
+        try {
+            const res = await fetch(`${API}/users/${id}`, {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify(form)
+            })
 
-        closeForm()
-        loadUsers()
+            const data = res.json()
 
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to edit user")
+            }
+            else {
+                msg.textContent = "User edited successfully"
+                msg.style.display = "block"
+                closeForm()
+                loadUsers()
+            }
+        } catch (error) {
+            openForm()
+            msg.textContent = error.message
+            msg.style.color = "red"
+        }
     }
-
-    openForm()
-
 }
 
 
