@@ -108,6 +108,12 @@ if (process.env.NODE_ENV === 'development') {
 */
 app.use(express.static(path.join(__dirname, 'public')));
 
+
+// default homr route
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'login.html'));
+});
+
 /*
 
  ROUTES
