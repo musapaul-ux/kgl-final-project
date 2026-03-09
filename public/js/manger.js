@@ -77,6 +77,7 @@ async function loadProcurements() {
 <td>${p.costUgx}</td>
 <td>${new Date(p.date).toLocaleDateString()}</td>
 <td>
+<button class="editProcBtn" style="background-color: green"data-id="${p._id}">Edit</button>
 <button class="deleteProcBtn" data-id="${p._id}">Delete</button>
 </td>
 </tr>
@@ -108,7 +109,7 @@ async function loadCashSales() {
 <td>${new Date(s.date).toLocaleDateString()}</td>
 
 <td>
-<button class="editSaleBtn" data-id="${s._id}">Edit</button>
+<button class="editSaleBtn" style="background-color: green"data-id="${s._id}">Edit</button>
 <button class="deleteSaleBtn" data-id="${s._id}">Delete</button>
 </td>
 
@@ -181,7 +182,7 @@ async function loadUsers() {
 <td>${new Date(u.createdAt).toLocaleDateString()}</td>
 <td>${new Date(u.updatedAt).toLocaleDateString()}</td>
 <td>
-<button class="editUserBtn" data-id="${u._id}">Edit</button>
+<button class="editUserBtn" style="background: green" data-id="${u._id}">Edit</button>
 <button class="deleteUserBtn" data-id="${u._id}">Delete</button>
 </td>
 
@@ -244,7 +245,7 @@ function openProcurementForm() {
 <label>Price To Sell</label>
 <input type="number" name="PriceToBeSoldAt">
 
-<button type="submit">Save</button>
+<button class="submitBtn" type="submit">Save</button>
 
 `
 
@@ -273,6 +274,77 @@ async function createProcurement(e) {
 
     closeForm()
     loadProcurements()
+
+}
+
+/* ================================
+EDIT PROCUREMENT
+================================ */
+
+async function editProcurement(id){
+
+    const res = await fetch(`${API}/procurement/${id}`,{headers})
+    const data = await res.json()
+
+    document.getElementById("formTitle").textContent = "Edit Procurement"
+
+    document.getElementById("dynamicForm").innerHTML = `
+
+<label>Produce Name</label>
+<input name="produceName" value="${data.produceName}">
+
+<label>Supplier Type</label>
+<select name="supplierType">
+<option ${data.supplierType==="Individual"?"selected":""}>Individual</option>
+<option ${data.supplierType==="Company"?"selected":""}>Company</option>
+<option ${data.supplierType==="Farm"?"selected":""}>Farm</option>
+</select>
+
+<label>Supplier Name</label>
+<input name="supplierName" value="${data.supplierName}">
+
+<label>Produce Type</label>
+<input name="produceType" value="${data.produceType}">
+
+<label>Date</label>
+<input type="date" name="date" value="${data.date?.split("T")[0]}">
+
+<label>Time</label>
+<input type="time" name="time" value="${data.time}">
+
+<label>Tonnage Kgs</label>
+<input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
+
+<label>Cost (UGX)</label>
+<input type="number" name="costUgx" value="${data.costUgx}">
+
+<label>Contact</label>
+<input name="contact" value="${data.contact}">
+
+<label>Price To Sell</label>
+<input type="number" name="PriceToBeSoldAt" value="${data.PriceToBeSoldAt}">
+
+<button type="submit">Update</button>
+`
+
+document.getElementById("dynamicForm").onsubmit = async function(e){
+
+    e.preventDefault()
+
+    const form = Object.fromEntries(new FormData(e.target))
+
+    await fetch(`${API}/procurement/${id}`,{
+        method:"PATCH",
+        headers,
+        body:JSON.stringify(form)
+    })
+
+    closeForm()
+    loadProcurements()
+
+}
+
+openForm()
 
 }
 
@@ -338,6 +410,65 @@ async function createCashSale(e) {
     closeForm()
 
     loadCashSales()
+
+}
+
+// handles editing
+/* ================================
+EDIT CASH SALE
+================================ */
+
+async function editSale(id) {
+
+    const res = await fetch(`${API}/sales/${id}`, { headers })
+    const data = await res.json()
+
+    document.getElementById("formTitle").textContent = "Edit Cash Sale"
+
+    document.getElementById("dynamicForm").innerHTML = `
+
+<label>Produce Name</label>
+<input name="produceName" value="${data.produceName}">
+
+<label>Tonnage Kgs</label>
+<input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
+
+<label>Amount Paid</label>
+<input type="number" name="amountPaid" value="${data.amountPaid}">
+
+<label>Buyer Name</label>
+<input name="buyerName" value="${data.buyerName}">
+
+<label>Sales Agent Name</label>
+<input name="salesAgentName" value="${data.salesAgentName}">
+
+<label>Date</label>
+<input type="date" name="date" value="${data.date?.split("T")[0]}">
+
+<label>Time</label>
+<input type="time" name="time" value="${data.time}">
+
+<button type="submit">Update</button>
+`
+
+    document.getElementById("dynamicForm").onsubmit = async function (e) {
+
+        e.preventDefault()
+
+        const form = Object.fromEntries(new FormData(e.target))
+
+        await fetch(`${API}/sales/${id}`, {
+            method: "PATCH",
+            headers,
+            body: JSON.stringify(form)
+        })
+
+        closeForm()
+        loadCashSales()
+
+    }
+
+    openForm()
 
 }
 
@@ -476,6 +607,56 @@ async function createUser(e) {
 
 }
 
+/* ================================
+EDIT USER
+================================ */
+
+async function editUser(id) {
+
+    const res = await fetch(`${API}/users/${id}`, { headers })
+    const data = await res.json()
+
+    document.getElementById("formTitle").textContent = "Edit User"
+
+    document.getElementById("dynamicForm").innerHTML = `
+
+<label>Name</label>
+<input name="name" value="${data.name}">
+
+<label>Email</label>
+<input name="email" value="${data.email}">
+
+<label>Role</label>
+<select name="role">
+<option ${data.role === "SalesAgent" ? "selected" : ""}>SalesAgent</option>
+<option ${data.role === "Manager" ? "selected" : ""}>Manager</option>
+<option ${data.role === "Director" ? "selected" : ""}>Director</option>
+</select>
+
+<button type="submit">Update</button>
+`
+
+    document.getElementById("dynamicForm").onsubmit = async function (e) {
+
+        e.preventDefault()
+
+        const form = Object.fromEntries(new FormData(e.target))
+
+        await fetch(`${API}/users/${id}`, {
+            method: "PATCH",
+            headers,
+            body: JSON.stringify(form)
+        })
+
+        closeForm()
+        loadUsers()
+
+    }
+
+    openForm()
+
+}
+
 
 
 /* DELETE FUNCTIONS */
@@ -583,7 +764,7 @@ document.getElementById("addUserBtn")
     .addEventListener("click", openUserForm)
 
 document.getElementById("cancelBtn")
-    .addEventListener("click", closeForm )
+    .addEventListener("click", closeForm)
 /* =============================
 TABLE ACTION EVENTS
 ============================= */
@@ -598,7 +779,7 @@ document.addEventListener("click", function (e) {
         deleteSale(e.target.dataset.id)
     }
 
-    if(e.target.classList.contains("deleteCreditBtn")){
+    if (e.target.classList.contains("deleteCreditBtn")) {
         deleteCredit(e.target.dataset.id)
     }
 
@@ -614,4 +795,15 @@ document.addEventListener("click", function (e) {
         editUser(e.target.dataset.id)
     }
 
+    if (e.target.classList.contains("editSaleBtn")) {
+        editSale(e.target.dataset.id)
+    }
+
+    if (e.target.classList.contains("editUserBtn")) {
+        editUser(e.target.dataset.id)
+    }
+
+    if (e.target.classList.contains("editProcBtn")) {
+    editProcurement(e.target.dataset.id)
+}
 })

@@ -96,7 +96,7 @@ td {
 }
 
 button {
-  background: tomato;
+  background: rgb(247, 15, 23);
   color: white;
   border: none;
   padding: 8px 14px;
@@ -105,14 +105,14 @@ button {
 }
 
 button:hover {
-  background: #dc204c;
+  background: #dc2087;
 }
 .logout-btn {
-  background-color: #dc2081;
+  background-color: #dc3620;
 }
 
 .logout-btn:hover {
-  background-color: #dc204c;
+  background-color: #dc2078;
 }
 
 /* ===========================

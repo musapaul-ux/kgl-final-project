@@ -32,7 +32,7 @@ async function loadDashboard() {
 function displayCards(data) {
 
     document.getElementById("stock").innerText =
-        data.totalStock.toLocaleString() + "Kgs ";
+        data.totalStock.toLocaleString() + " Kgs";
 
     document.getElementById("revenue").innerText = "Ugx " +
         data.totalRevenue.toLocaleString();
