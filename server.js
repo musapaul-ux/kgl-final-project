@@ -15,8 +15,9 @@ const path = require('path');
 
 const app = express();
 
-/*
 
+
+/*
  TRUST PROXY (for deployment)
 
 */
@@ -101,6 +102,13 @@ if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
+
+// setting up swagger for api documentation
+const swaggerUi = require('swagger-ui-express');
+const swaggerSpec = require('./config/swagger');
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 /*
 
  STATIC FILES
@@ -109,7 +117,7 @@ if (process.env.NODE_ENV === 'development') {
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-// default homr route
+// default home route
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'login.html'));
 });
