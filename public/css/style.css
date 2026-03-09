@@ -16,7 +16,7 @@ body {
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-  /* you can override --bg-start and --bg-end on a per-page basis */
+ 
 }
 
 /* Container */

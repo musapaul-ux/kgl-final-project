@@ -211,8 +211,24 @@ function openProcurementForm() {
 
     document.getElementById("dynamicForm").innerHTML = `
 
+    <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:#b30000;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
+
 <label>Produce Name</label>
-<input name="produceName" required>
+<select name="produceName">
+<option value="Beans">Beans</option>
+<option value="Grain Maize">Grain Maize</option>
+<option value="Soy beans">Soy beans</option>
+<option value="Cow peas">Cow peas</option>
+<option value="G-nuts">G-nuts</option>
+</select>
 
 <label>Supplier Type</label>
 <select name="supplierType">
@@ -261,19 +277,31 @@ async function createProcurement(e) {
     e.preventDefault()
 
     const form = Object.fromEntries(new FormData(e.target))
-
+    const msg = document.getElementById("feedBack")
     form.branchName = branch
 
-    await fetch(`${API}/procurement`, {
+    try {
+        const res = await fetch(`${API}/procurement`, {
+            method: "POST",
+            headers,
+            body: JSON.stringify(form)
 
-        method: "POST",
-        headers,
-        body: JSON.stringify(form)
+        })
 
-    })
+        const data = await res.json()
 
-    closeForm()
-    loadProcurements()
+        if (!res.ok) {
+            throw new Error(data.error || "failed to record procurement")
+        }
+
+        msg.textContent = "Procurement record created succesfully."
+        msg.style.display = "block"
+        closeForm()
+        loadProcurements()
+    } catch (error) {
+        msg.textContent = `error.message`
+        msg.style.display = "block"
+    }
 
 }
 
@@ -281,23 +309,32 @@ async function createProcurement(e) {
 EDIT PROCUREMENT
 */
 
-async function editProcurement(id){
+async function editProcurement(id) {
 
-    const res = await fetch(`${API}/procurement/${id}`,{headers})
+    const res = await fetch(`${API}/procurement/${id}`, { headers })
     const data = await res.json()
 
     document.getElementById("formTitle").textContent = "Edit Procurement"
 
     document.getElementById("dynamicForm").innerHTML = `
+    <div id="feedBack" style="
+    display:none;
+    background:#ffdede;
+    color:#b30000;
+    padding:10px;
+    margin-bottom:10px;
+    border-radius:4px;
+    font-size:14px;
+"></div>
 
 <label>Produce Name</label>
 <input name="produceName" value="${data.produceName}">
 
 <label>Supplier Type</label>
 <select name="supplierType">
-<option ${data.supplierType==="Individual"?"selected":""}>Individual</option>
-<option ${data.supplierType==="Company"?"selected":""}>Company</option>
-<option ${data.supplierType==="Farm"?"selected":""}>Farm</option>
+<option ${data.supplierType === "Individual" ? "selected" : ""}>Individual</option>
+<option ${data.supplierType === "Company" ? "selected" : ""}>Company</option>
+<option ${data.supplierType === "Farm" ? "selected" : ""}>Farm</option>
 </select>
 
 <label>Supplier Name</label>
@@ -327,25 +364,35 @@ async function editProcurement(id){
 <button type="submit" style="background-color: green;">Update</button>
 `
 
-document.getElementById("dynamicForm").onsubmit = async function(e){
+    document.getElementById("dynamicForm").onsubmit = async function (e) {
 
-    e.preventDefault()
+        e.preventDefault()
 
-    const form = Object.fromEntries(new FormData(e.target))
+        const form = Object.fromEntries(new FormData(e.target))
+        const msg = document.getElementById("feedBack")
 
-    await fetch(`${API}/procurement/${id}`,{
-        method:"PATCH",
-        headers,
-        body:JSON.stringify(form)
-    })
+        try {
+            const res = await fetch(`${API}/procurement/${id}`, {
+                method: "PATCH",
+                headers,
+                body: JSON.stringify(form)
+            })
 
-    closeForm()
-    loadProcurements()
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.message || "Failed to edit procurement")
+            }
+            msg.textContent = "procurement record editted successfully"
+            msg.style.display = "block"
 
-}
-
-openForm()
-
+        } catch (error) {
+            msg.textContent = `error.message`
+            msg.style.display = "block"
+            closeForm()
+            loadProcurements()
+        }
+    }
+    openForm()
 }
 
 
@@ -804,6 +851,6 @@ document.addEventListener("click", function (e) {
     }
 
     if (e.target.classList.contains("editProcBtn")) {
-    editProcurement(e.target.dataset.id)
-}
+        editProcurement(e.target.dataset.id)
+    }
 })
