@@ -19,3 +19,22 @@ loginForm.addEventListener("submit", async (e)=>{
     }
 
 })
+
+// handling nabkground slides show
+const body = document.body;
+        const classes = [
+            'slideshow-1','slideshow-2','slideshow-3',
+            'slideshow-4','slideshow-5','slideshow-6'
+        ];
+        let index = 0;
+
+        function nextSlide() {
+            body.className = classes[index];
+            index = (index + 1) % classes.length;
+        }
+
+        // Start with first image visible
+        nextSlide();
+
+        // Change every 7 seconds
+        setInterval(nextSlide, 6000);
