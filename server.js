@@ -2,39 +2,59 @@ require('dotenv').config();
 
 const express = require('express');
 const connectDB = require('./config/db');
+const seedUsers = require('./config/seed');
 
 const helmet = require('helmet');
 const cors = require('cors');
 const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
-const xss = require('xss-clean');
+// const mongoSanitize = require('express-mongo-sanitize');
+// const xss = require('xss-clean');
+// const hpp = require('hpp');
 const morgan = require('morgan');
 const path = require('path');
 
 const app = express();
 
+/*
 
+ TRUST PROXY (for deployment)
 
-// DATABASE CONNECTION
+*/
+app.set('trust proxy', 1);
 
-connectDB();
+/*
 
+ DATABASE CONNECTION
 
+*/
+connectDB().then(() => {
 
-// SECURITY MIDDLEWARE
+    // run seed only when enabled
+    if (process.env.RUN_SEED === "true") {
+        seedUsers();
+    }
 
-//  Set secure HTTP headers
+});
+
+/*
+
+ SECURITY MIDDLEWARE
+
+*/
+
+// Secure HTTP headers
 app.use(
-helmet.contentSecurityPolicy({
-directives: {
-defaultSrc: ["'self'"],
-scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
-styleSrc: ["'self'", "'unsafe-inline'"]
-}
-})
+    helmet.contentSecurityPolicy({
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'", "https://cdn.jsdelivr.net"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:", "https://cdn.jsdelivr.net"]
+        }
+    })
 );
 
-//  Enable CORS (restrict in production)
+// Enable CORS
 app.use(cors({
     origin: process.env.NODE_ENV === 'production'
         ? 'https://yourdomain.com'
@@ -42,48 +62,71 @@ app.use(cors({
     credentials: true
 }));
 
-//  Rate Limiting (prevent brute force)
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 mins
-    max: 100, // limit each IP
+// General API rate limit
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: 'Too many requests from this IP, please try again later.'
 });
-app.use('/api', limiter);
 
-// Body parser with size limit
+app.use('/api', apiLimiter);
+
+// Stronger login protection
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 10,
+    message: 'Too many login attempts. Please try again later.'
+});
+
+app.use('/api/auth', authLimiter);
+
+// Body parser
 app.use(express.json({ limit: '10kb' }));
 
-//  Prevent NoSQL injection
-// app.use(mongoSanitize()); // Commented out due to Express 5 compatibility issue with req.query
+// Prevent NoSQL Injection
+// app.use(mongoSanitize());
 
 // Prevent XSS attacks
-// app.use(xss()); // Commented out due to Express 5 compatibility issue with req.query
+// app.use(xss());
 
 // Prevent HTTP Parameter Pollution
-// app.use(hpp()); // Commented out due to Express 5 compatibility issue with req.query
+// app.use(hpp());
 
+/*
 
+ LOGGING (DEV ONLY)
 
-// LOGGING (DEV ONLY
+*/
+if (process.env.NODE_ENV === 'development') {
+    app.use(morgan('dev'));
+}
 
-//  STATIC FILES
+/*
 
+ STATIC FILES
+
+*/
 app.use(express.static(path.join(__dirname, 'public')));
 
+/*
 
-//  ROUTES
+ ROUTES
+
+*/
 
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/sales', require('./routes/cashSaleRoutes'));
-app.use('/api/credit', require('./routes/creditSaleRoutes')); // credit records for trusted buyers
+app.use('/api/credit', require('./routes/creditSaleRoutes'));
 app.use('/api/procurement', require('./routes/procurementRoutes'));
 app.use('/api/director', require('./routes/directorRoutes'));
 
+/*
 
+ 404 HANDLER
 
-//  404 HANDLER
+*/
 
 app.use((req, res, next) => {
     res.status(404).json({
@@ -92,23 +135,31 @@ app.use((req, res, next) => {
     });
 });
 
+/*
 
+ GLOBAL ERROR HANDLER
 
-//  GLOBAL ERROR HANDLER
+*/
 
 app.use((err, req, res, next) => {
+
     console.error(err.stack);
 
     res.status(err.statusCode || 500).json({
         status: 'error',
-        message: process.env.NODE_ENV === 'production'
-            ? 'Something went wrong'
-            : err.message
+        message:
+            process.env.NODE_ENV === 'production'
+                ? 'Something went wrong'
+                : err.message
     });
+
 });
 
+/*
 
-//  START SERVER
+ START SERVER
+
+*/
 
 const PORT = process.env.PORT || 5000;
 

@@ -77,7 +77,7 @@ async function loadProcurements() {
 <td>${p.costUgx}</td>
 <td>${new Date(p.date).toLocaleDateString()}</td>
 <td>
-<button class="editProcBtn" style="background-color: green"data-id="${p._id}">Edit</button>
+<button class="editProcBtn" style="background-color: green" data-id="${p._id}">Edit</button>
 <button class="deleteProcBtn" data-id="${p._id}">Delete</button>
 </td>
 </tr>
@@ -109,7 +109,7 @@ async function loadCashSales() {
 <td>${new Date(s.date).toLocaleDateString()}</td>
 
 <td>
-<button class="editSaleBtn" style="background-color: green"data-id="${s._id}">Edit</button>
+<button class="editSaleBtn" style="background-color: green;" data-id="${s._id}">Edit</button>
 <button class="deleteSaleBtn" data-id="${s._id}">Delete</button>
 </td>
 
@@ -182,7 +182,7 @@ async function loadUsers() {
 <td>${new Date(u.createdAt).toLocaleDateString()}</td>
 <td>${new Date(u.updatedAt).toLocaleDateString()}</td>
 <td>
-<button class="editUserBtn" style="background: green" data-id="${u._id}">Edit</button>
+<button class="editUserBtn" style="background: green;" data-id="${u._id}">Edit</button>
 <button class="deleteUserBtn" data-id="${u._id}">Delete</button>
 </td>
 
@@ -245,7 +245,7 @@ function openProcurementForm() {
 <label>Price To Sell</label>
 <input type="number" name="PriceToBeSoldAt">
 
-<button class="submitBtn" type="submit">Save</button>
+<button class="submitBtn" style="background-color: green;" type="submit">Save</button>
 
 `
 
@@ -277,9 +277,9 @@ async function createProcurement(e) {
 
 }
 
-/* ================================
+/* 
 EDIT PROCUREMENT
-================================ */
+*/
 
 async function editProcurement(id){
 
@@ -324,7 +324,7 @@ async function editProcurement(id){
 <label>Price To Sell</label>
 <input type="number" name="PriceToBeSoldAt" value="${data.PriceToBeSoldAt}">
 
-<button type="submit">Update</button>
+<button type="submit" style="background-color: green;">Update</button>
 `
 
 document.getElementById("dynamicForm").onsubmit = async function(e){
@@ -380,7 +380,7 @@ function openCashSaleForm() {
 <label>Time</label>
 <input type="time" name="time">
 
-<button type="submit">Save</button>
+<button style="background-color: green;" type="submit">Save</button>
 
 `
 
@@ -414,9 +414,9 @@ async function createCashSale(e) {
 }
 
 // handles editing
-/* ================================
+/* 
 EDIT CASH SALE
-================================ */
+*/
 
 async function editSale(id) {
 
@@ -448,7 +448,7 @@ async function editSale(id) {
 <label>Time</label>
 <input type="time" name="time" value="${data.time}">
 
-<button type="submit">Update</button>
+<button type="submit" style="background-color: green;">Update</button>
 `
 
     document.getElementById("dynamicForm").onsubmit = async function (e) {
@@ -473,9 +473,9 @@ async function editSale(id) {
 }
 
 
-/* ================================
+/* 
 CREDIT SALE
-================================ */
+*/
 
 function openCreditSaleForm() {
 
@@ -516,7 +516,7 @@ function openCreditSaleForm() {
 <label>Dispatch Date</label>
 <input type="date" name="dispatchDate">
 
-<button type="submit">Save</button>
+<button type="submit" style="background-color: green;">Save</button>
 
 `
 
@@ -575,7 +575,7 @@ function openUserForm() {
 <option>Director</option>
 </select>
 
-<button type="submit">Save</button>
+<button type="submit" style="background-color: green;">Save</button>
 
 `
 
@@ -607,9 +607,9 @@ async function createUser(e) {
 
 }
 
-/* ================================
+/* 
 EDIT USER
-================================ */
+ */
 
 async function editUser(id) {
 
@@ -633,7 +633,7 @@ async function editUser(id) {
 <option ${data.role === "Director" ? "selected" : ""}>Director</option>
 </select>
 
-<button type="submit">Update</button>
+<button type="submit" style="background-color: green;">Update</button>
 `
 
     document.getElementById("dynamicForm").onsubmit = async function (e) {
