@@ -100,20 +100,44 @@ exports.getAllProcurement = async (req, res, next) => {
 // DELETE PROCUREMENT (reverse stock)
 exports.deleteProcurement = async (req, res, next) => {
     try {
+
         const record = await Procurement.findById(req.params.id);
-        if (!record) return res.status(404).json({ message: 'Record not found' });
+
+        if (!record) {
+            return res.status(404).json({ message: "Record not found" });
+        }
+
+        const quantity = Number(record.tonnageKgs);
 
         const product = await Product.findOne({
             name: record.produceName,
             branch: record.branchName
         });
-        if (product) {
-            product.quantity -= record.tonnageKgs;
-            await product.save();
+
+        if (!product) {
+            return res.status(400).json({
+                message: "Product record not found"
+            });
         }
 
+        if (product.quantity < quantity) {
+            return res.status(400).json({
+                message: "Cannot delete procurement because stock has already been used"
+            });
+        }
+
+        // reverse stock
+        product.quantity -= quantity;
+        await product.save();
+
+        // delete procurement
         await record.deleteOne();
-        res.json({ message: 'Procurement deleted and stock reversed' });
+
+        res.json({
+            message: "Procurement deleted and stock reversed",
+            remainingStock: product.quantity
+        });
+
     } catch (err) {
         next(err);
     }
