@@ -295,6 +295,7 @@ async function createProcurement(e) {
             msg.style.display = "block"
             closeForm()
             loadProcurements()
+            loadProducts()
         }
     } catch (error) {
         msg.textContent = error.message
@@ -407,7 +408,13 @@ function openCashSaleForm() {
     document.getElementById("dynamicForm").innerHTML = `
 
 <label>Produce Name</label>
-<input name="produceName">
+<select name="produceName">
+<option value="Beans">Beans</option>
+<option value="Grain Maize">Grain Maize</option>
+<option value="Soy beans">Soy beans</option>
+<option value="Cow peas">Cow peas</option>
+<option value="G-nuts">G-nuts</option>
+</select>
 
 <label>Tonnage Kgs</label>
 <input type="number" name="tonnageKgs">
@@ -472,6 +479,7 @@ async function createCashSale(e) {
             msg.style.display = "block"
             closeForm()
             loadCashSales()
+            loadProducts()
         }
     } catch (error) {
         msg.textContent = error.message
@@ -658,6 +666,7 @@ async function createCreditSale(e) {
             msg.style.display = "block"
             closeForm()
             loadCreditSales()
+            loadProducts()
         }
     } catch (error) {
         msg.textContent = error.message
@@ -759,25 +768,30 @@ async function editUser(id) {
     const res = await fetch(`${API}/users/${id}`, { headers })
     const data = await res.json()
 
+    if (!res.ok) {
+        alert(data.message || "Failed to load user")
+        return
+    }
+
     document.getElementById("formTitle").textContent = "Edit User"
 
     document.getElementById("dynamicForm").innerHTML = `
 
     <div id="feedBack" style="
     display:none;
-    background:#ffdede;
-    color:green;
+    background:#e6ffed;
+    color:#0a7a28;
     padding:10px;
     margin-bottom:10px;
     border-radius:4px;
     font-size:14px;
-"></div>
+    "></div>
 
 <label>Name</label>
-<input name="name" value="${data.name}">
+<input name="name" value="${data.name || ""}" required>
 
 <label>Email</label>
-<input name="email" value="${data.email}">
+<input name="email" value="${data.email || ""}" required>
 
 <label>Role</label>
 <select name="role">
@@ -798,29 +812,37 @@ async function editUser(id) {
         const msg = document.getElementById("feedBack")
 
         try {
+
             const res = await fetch(`${API}/users/${id}`, {
-                method: "PATCH",
+                method: "PUT",
                 headers,
                 body: JSON.stringify(form)
             })
 
-            const data = res.json()
+            const data = await res.json()
 
             if (!res.ok) {
                 throw new Error(data.message || "Failed to edit user")
             }
-            else {
-                msg.textContent = "User edited successfully"
-                msg.style.display = "block"
+
+            msg.textContent = "User edited successfully"
+            msg.style.display = "block"
+
+            setTimeout(() => {
                 closeForm()
                 loadUsers()
-            }
+            }, 1200)
+
         } catch (error) {
-            msg.textContent = error.message || "failed to edit user"
+
+            msg.textContent = error.message || "Failed to edit user"
             msg.style.color = "red"
-            openForm()
+            msg.style.display = "block"
+
         }
     }
+
+    openForm()
 }
 
 
