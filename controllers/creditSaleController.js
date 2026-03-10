@@ -19,16 +19,15 @@ exports.createCredit = async (req, res, next) => {
             branchName
         } = req.body;
 
+        const quantity = Number(tonnageKgs)
         // decrement stock for the branch/product
         const product = await Product.findOne({ name: produceName, branch: branchName });
         if (!product) {
             return res.status(404).json({ message: 'Product not found for branch' });
         }
-        if (product.quantity < tonnageKgs) {
+        if (product.quantity < quantity) {
             return res.status(400).json({ message: 'Insufficient stock available' });
         }
-        product.quantity -= tonnageKgs;
-        await product.save();
 
         const credit = await Credit.create({
             buyerName,
@@ -46,7 +45,14 @@ exports.createCredit = async (req, res, next) => {
             agent: req.user.id
         });
 
-        res.status(201).json({ credit, product });
+        const data = credit.json();
+        if (!data.ok) {
+            throw new Error(res.message || "Failed to save sale")
+        }else{
+            product.quantity -= tonnageKgs;
+            await product.save();
+            res.status(201).json({ credit, product });
+        }
     } catch (err) {
         next(err);
     }

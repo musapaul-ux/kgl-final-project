@@ -9,9 +9,9 @@
 
 document.querySelector(".logout-btn").addEventListener("click", logoutUser);
 
-/* ==============================
+/* 
    TOKEN HANDLING
-================================ */
+ */
 
 const token = localStorage.getItem("token");
 

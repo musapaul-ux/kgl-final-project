@@ -77,7 +77,6 @@ async function loadProcurements() {
 <td>${p.costUgx}</td>
 <td>${new Date(p.date).toLocaleDateString()}</td>
 <td>
-<button class="editProcBtn" style="background-color: green" data-id="${p._id}">Edit</button>
 <button class="deleteProcBtn" data-id="${p._id}">Delete</button>
 </td>
 </tr>
@@ -109,7 +108,6 @@ async function loadCashSales() {
 <td>${new Date(s.date).toLocaleDateString()}</td>
 
 <td>
-<button class="editSaleBtn" style="background-color: green;" data-id="${s._id}">Edit</button>
 <button class="deleteSaleBtn" data-id="${s._id}">Delete</button>
 </td>
 
@@ -310,92 +308,92 @@ async function createProcurement(e) {
 EDIT PROCUREMENT
 */
 
-async function editProcurement(id) {
+// async function editProcurement(id) {
 
-    const res = await fetch(`${API}/procurement/${id}`, { headers })
-    const data = await res.json()
+//     const res = await fetch(`${API}/procurement/${id}`, { headers })
+//     const data = await res.json()
 
-    document.getElementById("formTitle").textContent = "Edit Procurement"
+//     document.getElementById("formTitle").textContent = "Edit Procurement"
 
-    document.getElementById("dynamicForm").innerHTML = `
-    <div id="feedBack" style="
-    display:none;
-    background:#ffdede;
-    color:#b30000;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:4px;
-    font-size:14px;
-"></div>
+//     document.getElementById("dynamicForm").innerHTML = `
+//     <div id="feedBack" style="
+//     display:none;
+//     background:#ffdede;
+//     color:#b30000;
+//     padding:10px;
+//     margin-bottom:10px;
+//     border-radius:4px;
+//     font-size:14px;
+// "></div>
 
-<label>Produce Name</label>
-<input name="produceName" value="${data.produceName}">
+// <label>Produce Name</label>
+// <input name="produceName" value="${data.produceName}">
 
-<label>Supplier Type</label>
-<select name="supplierType">
-<option ${data.supplierType === "Individual" ? "selected" : ""}>Individual</option>
-<option ${data.supplierType === "Company" ? "selected" : ""}>Company</option>
-<option ${data.supplierType === "Farm" ? "selected" : ""}>Farm</option>
-</select>
+// <label>Supplier Type</label>
+// <select name="supplierType">
+// <option ${data.supplierType === "Individual" ? "selected" : ""}>Individual</option>
+// <option ${data.supplierType === "Company" ? "selected" : ""}>Company</option>
+// <option ${data.supplierType === "Farm" ? "selected" : ""}>Farm</option>
+// </select>
 
-<label>Supplier Name</label>
-<input name="supplierName" value="${data.supplierName}">
+// <label>Supplier Name</label>
+// <input name="supplierName" value="${data.supplierName}">
 
-<label>Produce Type</label>
-<input name="produceType" value="${data.produceType}">
+// <label>Produce Type</label>
+// <input name="produceType" value="${data.produceType}">
 
-<label>Date</label>
-<input type="date" name="date" value="${data.date?.split("T")[0]}">
+// <label>Date</label>
+// <input type="date" name="date" value="${data.date?.split("T")[0]}">
 
-<label>Time</label>
-<input type="time" name="time" value="${data.time}">
+// <label>Time</label>
+// <input type="time" name="time" value="${data.time}">
 
-<label>Tonnage Kgs</label>
-<input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
+// <label>Tonnage Kgs</label>
+// <input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
 
-<label>Cost (UGX)</label>
-<input type="number" name="costUgx" value="${data.costUgx}">
+// <label>Cost (UGX)</label>
+// <input type="number" name="costUgx" value="${data.costUgx}">
 
-<label>Contact</label>
-<input name="contact" value="${data.contact}">
+// <label>Contact</label>
+// <input name="contact" value="${data.contact}">
 
-<label>Price To Sell</label>
-<input type="number" name="PriceToBeSoldAt" value="${data.PriceToBeSoldAt}">
+// <label>Price To Sell</label>
+// <input type="number" name="PriceToBeSoldAt" value="${data.PriceToBeSoldAt}">
 
-<button type="submit" style="background-color: green;">Update</button>
-`
+// <button type="submit" style="background-color: green;">Update</button>
+// `
 
-    document.getElementById("dynamicForm").onsubmit = async function (e) {
+//     document.getElementById("dynamicForm").onsubmit = async function (e) {
 
-        e.preventDefault()
+//         e.preventDefault()
 
-        const form = Object.fromEntries(new FormData(e.target))
-        const msg = document.getElementById("feedBack")
+//         const form = Object.fromEntries(new FormData(e.target))
+//         const msg = document.getElementById("feedBack")
 
-        try {
-            const res = await fetch(`${API}/procurement/${id}`, {
-                method: "PATCH",
-                headers,
-                body: JSON.stringify(form)
-            })
+//         try {
+//             const res = await fetch(`${API}/procurement/${id}`, {
+//                 method: "PATCH",
+//                 headers,
+//                 body: JSON.stringify(form)
+//             })
 
-            const data = await res.json();
-            if (!res.ok) {
-                throw new Error(data.message || "Failed to edit procurement")
-            }
-            msg.textContent = "procurement record editted successfully"
-            msg.style.display = "block"
+//             const data = await res.json();
+//             if (!res.ok) {
+//                 throw new Error(data.message || "Failed to edit procurement")
+//             }
+//             msg.textContent = "procurement record editted successfully"
+//             msg.style.display = "block"
 
-        } catch (error) {
-            msg.textContent = error.message
-            msg.style.display = "block"
-            msg.style.color = "red"
-            closeForm()
-            loadProcurements()
-        }
-    }
-    openForm()
-}
+//         } catch (error) {
+//             msg.textContent = error.message
+//             msg.style.display = "block"
+//             msg.style.color = "red"
+//             closeForm()
+//             loadProcurements()
+//         }
+//     }
+//     openForm()
+// }
 
 
 /* ================================
@@ -487,82 +485,82 @@ async function createCashSale(e) {
 EDIT CASH SALE
 */
 
-async function editSale(id) {
+// async function editSale(id) {
 
-    const res = await fetch(`${API}/sales/${id}`, { headers })
-    const data = await res.json()
+//     const res = await fetch(`${API}/sales/${id}`, { headers })
+//     const data = await res.json()
 
-    document.getElementById("formTitle").textContent = "Edit Cash Sale"
+//     document.getElementById("formTitle").textContent = "Edit Cash Sale"
 
-    document.getElementById("dynamicForm").innerHTML = `
+//     document.getElementById("dynamicForm").innerHTML = `
     
-    <div id="feedBack" style="
-    display:none;
-    background:#ffdede;
-    color:#b30000;
-    padding:10px;
-    margin-bottom:10px;
-    border-radius:4px;
-    font-size:14px;
-"></div>
+//     <div id="feedBack" style="
+//     display:none;
+//     background:#ffdede;
+//     color:#b30000;
+//     padding:10px;
+//     margin-bottom:10px;
+//     border-radius:4px;
+//     font-size:14px;
+// "></div>
 
-<label>Produce Name</label>
-<input name="produceName" value="${data.produceName}">
+// <label>Produce Name</label>
+// <input name="produceName" value="${data.produceName}">
 
-<label>Tonnage Kgs</label>
-<input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
+// <label>Tonnage Kgs</label>
+// <input type="number" name="tonnageKgs" value="${data.tonnageKgs}">
 
-<label>Amount Paid</label>
-<input type="number" name="amountPaid" value="${data.amountPaid}">
+// <label>Amount Paid</label>
+// <input type="number" name="amountPaid" value="${data.amountPaid}">
 
-<label>Buyer Name</label>
-<input name="buyerName" value="${data.buyerName}">
+// <label>Buyer Name</label>
+// <input name="buyerName" value="${data.buyerName}">
 
-<label>Sales Agent Name</label>
-<input name="salesAgentName" value="${data.salesAgentName}">
+// <label>Sales Agent Name</label>
+// <input name="salesAgentName" value="${data.salesAgentName}">
 
-<label>Date</label>
-<input type="date" name="date" value="${data.date?.split("T")[0]}">
+// <label>Date</label>
+// <input type="date" name="date" value="${data.date?.split("T")[0]}">
 
-<label>Time</label>
-<input type="time" name="time" value="${data.time}">
+// <label>Time</label>
+// <input type="time" name="time" value="${data.time}">
 
-<button type="submit" style="background-color: green;">Update</button>
-`
+// <button type="submit" style="background-color: green;">Update</button>
+// `
 
-    document.getElementById("dynamicForm").onsubmit = async function (e) {
+//     document.getElementById("dynamicForm").onsubmit = async function (e) {
 
-        e.preventDefault()
+//         e.preventDefault()
 
-        const form = Object.fromEntries(new FormData(e.target))
-        const msg = document.getElementById("feedBack")
+//         const form = Object.fromEntries(new FormData(e.target))
+//         const msg = document.getElementById("feedBack")
 
-        try {
-            const res = await fetch(`${API}/sales/${id}`, {
-                method: "PATCH",
-                headers,
-                body: JSON.stringify(form)
-            })
+//         try {
+//             const res = await fetch(`${API}/sales/${id}`, {
+//                 method: "PATCH",
+//                 headers,
+//                 body: JSON.stringify(form)
+//             })
 
-            const data = res.json()
+//             const data = res.json()
 
-            if (!res.ok) {
-                throw new Error(data.message || "failed to edit sale!")
-            } else {
-                msg.textContent = "sale updated successfully."
-                msg.style.display = "block"
-                closeForm()
-                loadCashSales()
-            }
+//             if (!res.ok) {
+//                 throw new Error(data.message || "failed to edit sale!")
+//             } else {
+//                 msg.textContent = "sale updated successfully."
+//                 msg.style.display = "block"
+//                 closeForm()
+//                 loadCashSales()
+//             }
 
-        } catch (error) {
-            msg.textContent = error.message
-            msg.style.display = "block"
-            msg.style.color = "red"
-        }
+//         } catch (error) {
+//             msg.textContent = error.message
+//             msg.style.display = "block"
+//             msg.style.color = "red"
+//         }
 
-    }
-}
+//     }
+// }
 
 
 /* 
@@ -818,9 +816,9 @@ async function editUser(id) {
                 loadUsers()
             }
         } catch (error) {
-            openForm()
-            msg.textContent = error.message
+            msg.textContent = error.message || "failed to edit user"
             msg.style.color = "red"
+            openForm()
         }
     }
 }
@@ -955,23 +953,19 @@ document.addEventListener("click", function (e) {
         deleteUser(e.target.dataset.id)
     }
 
-    if (e.target.classList.contains("editSaleBtn")) {
-        editSale(e.target.dataset.id)
-    }
+    // if (e.target.classList.contains("editSaleBtn")) {
+    //     editSale(e.target.dataset.id)
+    // }
 
     if (e.target.classList.contains("editUserBtn")) {
         editUser(e.target.dataset.id)
     }
 
-    if (e.target.classList.contains("editSaleBtn")) {
-        editSale(e.target.dataset.id)
-    }
+    // if (e.target.classList.contains("editSaleBtn")) {
+    //     editSale(e.target.dataset.id)
+    // }
 
-    if (e.target.classList.contains("editUserBtn")) {
-        editUser(e.target.dataset.id)
-    }
-
-    if (e.target.classList.contains("editProcBtn")) {
-        editProcurement(e.target.dataset.id)
-    }
+    // if (e.target.classList.contains("editProcBtn")) {
+    //     editProcurement(e.target.dataset.id)
+    // }
 })
