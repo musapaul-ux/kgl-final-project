@@ -289,7 +289,7 @@ async function createProcurement(e) {
         const data = await res.json()
 
         if (!res.ok) {
-            throw new Error(data.error || "failed to record procurement")
+            throw new Error(data.message || "failed to record procurement")
         } else {
             msg.textContent = "Procurement record created succesfully."
             msg.style.display = "block"

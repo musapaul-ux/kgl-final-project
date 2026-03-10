@@ -19,16 +19,26 @@ exports.createCredit = async (req, res, next) => {
             branchName
         } = req.body;
 
-        const quantity = Number(tonnageKgs)
-        // decrement stock for the branch/product
-        const product = await Product.findOne({ name: produceName, branch: branchName });
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found for branch' });
-        }
-        if (product.quantity < quantity) {
-            return res.status(400).json({ message: 'Insufficient stock available' });
+        const quantity = Number(tonnageKgs);
+
+        if (quantity <= 0) {
+            return res.status(400).json({ message: "Invalid quantity" });
         }
 
+        const product = await Product.findOne({
+            name: produceName,
+            branch: branchName
+        });
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found for branch" });
+        }
+
+        if (product.quantity < quantity) {
+            return res.status(400).json({ message: "Insufficient stock available" });
+        }
+
+        // Create credit record
         const credit = await Credit.create({
             buyerName,
             nationalId,
@@ -39,19 +49,18 @@ exports.createCredit = async (req, res, next) => {
             dueDate,
             produceName,
             produceType,
-            tonnageKgs,
+            tonnageKgs: quantity,
             dispatchDate,
             branchName,
             agent: req.user.id
         });
 
-        const data = credit.json();
-        if (!data.ok) {
-            throw new Error(res.message || "Failed to save sale")
-        }else{
-            product.quantity -= tonnageKgs;
-            await product.save();
-            res.status(201).json({ credit, product });
+        // Update stock AFTER credit is saved
+        if(credit){
+             product.quantity -= quantity;
+        await product.save();
+
+        res.status(201).json({ credit, product });
         }
     } catch (err) {
         next(err);

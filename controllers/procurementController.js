@@ -19,6 +19,14 @@ exports.createProcurement = async (req, res, next) => {
             PriceToBeSoldAt
         } = req.body;
 
+        const quantity = Number(tonnageKgs)
+
+       if (quantity <= 0) {
+            return res.status(400).json({
+                message: "Invalid tonnage value"
+            });
+        }
+
         // individual dealers must supply at least 1 tonne
         if (supplierType === 'Individual' && tonnageKgs < 1000) {
             return res.status(400).json({
@@ -28,7 +36,7 @@ exports.createProcurement = async (req, res, next) => {
 
         // if it's a farm delivery, supplierName should equal branch
         if (supplierType === 'Farm') {
-            if (supplierName !== branchName) {
+            if (supplierName !== branchName || supplierName !== "Matugga" || supplierName !== "Maganjo") {
                 return res.status(400).json({
                     message: 'Farm supplierName must match branch'
                 });
@@ -57,13 +65,13 @@ exports.createProcurement = async (req, res, next) => {
         });
 
         if (product) {
-            product.quantity += tonnageKgs;
+            product.quantity += quantity;
             await product.save();
         } else {
             // create a new product entry if it doesn't exist yet
             product = await Product.create({
                 name: produceName,
-                quantity: tonnageKgs,
+                quantity: quantity,
                 price: PriceToBeSoldAt || costUgx, // whichever price you sell at
                 branch: branchName
             });
