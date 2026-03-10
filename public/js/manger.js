@@ -814,7 +814,7 @@ async function editUser(id) {
         try {
 
             const res = await fetch(`${API}/users/${id}`, {
-                method: "PUT",
+                method: "PATCH",
                 headers,
                 body: JSON.stringify(form)
             })
